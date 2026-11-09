@@ -15,6 +15,24 @@ humhub.module('euro_office', function (module, require, $) {
     var apiPromises = {};
 
     /**
+     * Prevents the automatic page reload of HumHub on CSP violations while the editor is opened
+     *
+     * Before HumHub 1.20, a violation of the "script-src" directive reloads the page (see humhub.client.js),
+     * which closes the editor. The reload is skipped if the last one was done recently.
+     * @todo Remove when HumHub 1.20 is the minimum version
+     */
+    var preventCspViolationReload = function () {
+        try {
+            localStorage.setItem('cspViolationReloadTime', Date.now().toString());
+        } catch (e) {
+            // localStorage is not available
+        }
+    };
+
+    // As early as possible, the violation may occur while the editor modal is loaded
+    preventCspViolationReload();
+
+    /**
      * Returns the CSP nonce of the current page, if any
      */
     var getNonce = function () {
@@ -61,6 +79,7 @@ humhub.module('euro_office', function (module, require, $) {
 
     Editor.prototype.init = function () {
         var that = this;
+        preventCspViolationReload();
         this.modal = modal.get('#euro-office-modal');
         this.closing = false;
         this.closeRequestPending = false;
