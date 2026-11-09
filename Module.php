@@ -11,8 +11,10 @@ namespace humhub\modules\euro_office;
 use humhub\modules\euro_office\models\Configuration;
 use humhub\modules\euro_office\permissions\CanUseEuroOffice;
 use humhub\modules\euro_office\services\DocumentFormats;
+use humhub\modules\euro_office\services\DocumentType;
 use humhub\modules\file\models\File;
 use humhub\modules\user\models\User;
+use Yii;
 use yii\helpers\Url;
 
 class Module extends \humhub\components\Module
@@ -57,8 +59,18 @@ class Module extends \humhub\components\Module
     public function canView(File $file, User|int|null $user = null): bool
     {
         return DocumentFormats::isSupported($file)
+            && !$this->isLeftToPdfViewer($file)
             && $file->canView($user)
             && $file->store->has();
+    }
+
+    /**
+     * PDF files are opened by the PDF Viewer module, if it is enabled
+     */
+    private function isLeftToPdfViewer(File $file): bool
+    {
+        return DocumentFormats::getDocumentType($file) === DocumentType::Pdf
+            && Yii::$app->hasModule('pdf-viewer');
     }
 
     /**

@@ -9,6 +9,7 @@ The module works with [Euro-Office](https://github.com/euro-office/documentserve
 - Create new documents (`.docx`), spreadsheets (`.xlsx`) and presentations (`.pptx`)
 - Edit Office Open XML files together with other users in real time
 - View further formats read-only (e.g. `.doc`, `.odt`, `.rtf`, `.xls`, `.ods`, `.ppt`, `.odp`)
+- View PDF files read-only (if the PDF Viewer module is enabled, it opens PDF files instead)
 - Saved changes create a new file version, if file versioning is enabled
 - Touch optimized editor on smartphones
 - Access can be restricted with the permission "Can use Euro-Office"

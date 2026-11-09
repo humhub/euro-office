@@ -26,6 +26,9 @@ class DocumentFormatsTest extends HumHubDbTestCase
         $this->assertTrue(DocumentFormats::isSupported($this->file('a.odt')));
         $this->assertFalse(DocumentFormats::isEditable($this->file('a.odt')));
 
+        $this->assertSame(DocumentType::Pdf, DocumentFormats::getDocumentType($this->file('a.PDF')));
+        $this->assertFalse(DocumentFormats::isEditable($this->file('a.pdf')));
+
         $this->assertFalse(DocumentFormats::isSupported($this->file('a.txt')));
         $this->assertFalse(DocumentFormats::isEditable($this->file('noextension')));
         $this->assertNull(DocumentFormats::getDocumentType($this->file('image.png')));

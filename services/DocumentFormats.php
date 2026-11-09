@@ -39,6 +39,7 @@ final class DocumentFormats
         'pptm' => [DocumentType::Slide, false],
         'potx' => [DocumentType::Slide, false],
         'odp' => [DocumentType::Slide, false],
+        'pdf' => [DocumentType::Pdf, false],
     ];
 
     public static function getExtension(File $file): string
