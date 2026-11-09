@@ -15,6 +15,14 @@ humhub.module('euro_office', function (module, require, $) {
     var apiPromises = {};
 
     /**
+     * Returns the CSP nonce of the current page, if any
+     */
+    var getNonce = function () {
+        var script = document.querySelector('script[nonce]');
+        return script ? script.nonce || script.getAttribute('nonce') : null;
+    };
+
+    /**
      * Loads the Docs API script of the document server once
      */
     var loadApi = function (url) {
@@ -25,6 +33,11 @@ humhub.module('euro_office', function (module, require, $) {
         if (!apiPromises[url]) {
             apiPromises[url] = new Promise(function (resolve, reject) {
                 var script = document.createElement('script');
+                var nonce = getNonce();
+                if (nonce) {
+                    // Allows the script with a Content Security Policy that does not list the document server
+                    script.nonce = nonce;
+                }
                 script.src = url;
                 script.onload = function () {
                     window.DocsAPI ? resolve(window.DocsAPI) : reject(new Error('DocsAPI not available'));
