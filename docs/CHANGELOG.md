@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.0.2 (Unreleased)
-------------------
+1.0.2 (November 9, 2026)
+------------------------
 - Fix: Page reload by HumHub before 1.20 on CSP violations while opening the editor
 
 1.0.1 (November 9, 2026)
