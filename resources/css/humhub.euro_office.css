@@ -1,0 +1,33 @@
+/* Modal header in the color of the editor (see DocumentType::getColor()) */
+.euro-office-modal-header {
+    background-color: var(--euro-office-color);
+    border-bottom: 0;
+}
+
+.euro-office-modal-header .modal-title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    color: #fff;
+}
+
+/* Hint "Changes are saved automatically", right aligned next to the close button */
+.euro-office-modal-header .modal-title small {
+    margin-left: auto;
+    padding: 0 16px;
+    font-size: 12px;
+    font-weight: normal;
+    white-space: nowrap;
+    opacity: .75;
+}
+
+.euro-office-modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+@media (max-width: 767px) {
+    .euro-office-modal-header .modal-title small {
+        display: none;
+    }
+}

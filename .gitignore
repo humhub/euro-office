@@ -1,0 +1,6 @@
+/composer.lock
+/vendor/
+/tests/codeception/_support/_generated/**
+/tests/codeception/_output/**
+/.playwright-mcp/
+/.idea/

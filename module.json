@@ -1,0 +1,25 @@
+{
+    "id": "euro-office",
+    "name": "Euro-Office Integration",
+    "description": "Create, view and edit office documents, spreadsheets and presentations directly in HumHub using Euro-Office or ONLYOFFICE Docs.",
+    "keywords": [
+        "euro-office",
+        "onlyoffice",
+        "office",
+        "document",
+        "spreadsheet",
+        "presentation",
+        "collaboration"
+    ],
+    "version": "1.0.0",
+    "humhub": {
+        "minVersion": "1.19"
+    },
+    "screenshots": [
+        "resources/screenshot1.png",
+        "resources/screenshot2.png",
+        "resources/screenshot3.png",
+        "resources/screenshot4.png",
+        "resources/screenshot5.png"
+    ]
+}

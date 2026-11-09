@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1F5FC9"/>
+      <stop offset="1" stop-color="#0B2F7A"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#bg)"/>
+  <!-- Document with folded corner -->
+  <path d="M66 52 H110 L134 76 V148 H66 Z" fill="#FFFFFF"/>
+  <path d="M110 52 V76 H134 Z" fill="#B9CDF2"/>
+  <!-- Abstract content: text, cells, slide -->
+  <rect x="78" y="86" width="44" height="7" rx="2" fill="#1F5FC9"/>
+  <rect x="78" y="101" width="20" height="16" rx="2" fill="#2E9E6A"/>
+  <rect x="102" y="101" width="20" height="16" rx="2" fill="#2E9E6A" opacity=".55"/>
+  <rect x="78" y="125" width="44" height="11" rx="2" fill="#E8833A"/>
+  <!-- Orbit of dots -->
+  <g fill="#FFD43B">
+    <circle cx="32.5" cy="61.0" r="4.5"/>
+    <circle cx="61.0" cy="32.5" r="4.5"/>
+    <circle cx="100.0" cy="22.0" r="4.5"/>
+    <circle cx="139.0" cy="32.5" r="4.5"/>
+    <circle cx="167.5" cy="61.0" r="4.5"/>
+    <circle cx="178.0" cy="100.0" r="4.5"/>
+    <circle cx="167.5" cy="139.0" r="4.5"/>
+    <circle cx="139.0" cy="167.5" r="4.5"/>
+    <circle cx="100.0" cy="178.0" r="4.5"/>
+  </g>
+</svg>
