@@ -35,6 +35,7 @@ use humhub\widgets\form\ActiveForm;
         <h5><?= Yii::t('EuroOfficeModule.base', 'Advanced') ?></h5>
         <?= $form->field($model, 'internalServerUrl') ?>
         <?= $form->field($model, 'humhubUrl') ?>
+        <?= $form->field($model, 'verifyPeerOff')->checkbox() ?>
 
         <?= Button::save()->submit() ?>
 
