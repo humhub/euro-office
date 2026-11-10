@@ -41,6 +41,12 @@ class Configuration extends Model
 
     public string $jwtHeader = 'Authorization';
 
+    /**
+     * @var bool|string whether to skip the SSL certificate check on requests from HumHub to the document server.
+     * Not typed, so invalid form input is rejected by the validation rule instead of being coerced.
+     */
+    public $verifyPeerOff = false;
+
     public ?SettingsManager $settingsManager = null;
 
     /**
@@ -63,6 +69,7 @@ class Configuration extends Model
             ],
             ['jwtSecret', 'string', 'min' => self::MIN_SECRET_LENGTH],
             ['jwtHeader', 'match', 'pattern' => '/^[A-Za-z0-9-]+$/'],
+            ['verifyPeerOff', 'boolean'],
             ['serverUrl', 'validateConnection', 'skipOnError' => true],
         ];
     }
@@ -95,6 +102,7 @@ class Configuration extends Model
             'humhubUrl' => Yii::t('EuroOfficeModule.base', 'HumHub URL for the document server'),
             'jwtSecret' => Yii::t('EuroOfficeModule.base', 'JWT secret'),
             'jwtHeader' => Yii::t('EuroOfficeModule.base', 'JWT header'),
+            'verifyPeerOff' => Yii::t('EuroOfficeModule.base', 'Disable certificate verification (insecure)'),
         ];
     }
 
@@ -128,6 +136,10 @@ class Configuration extends Model
                 'The HTTP header used by the document server for JWT tokens (e.g. environment variable JWT_HEADER). Default: {header}',
                 ['header' => 'Authorization'],
             ),
+            'verifyPeerOff' => Yii::t(
+                'EuroOfficeModule.base',
+                'Accept invalid or self-signed SSL certificates of the document server on requests from HumHub. Browsers must still trust the certificate.',
+            ),
         ];
     }
 
@@ -146,6 +158,11 @@ class Configuration extends Model
         return rtrim($this->internalServerUrl ?: $this->serverUrl, '/');
     }
 
+    public function isVerifyPeerOff(): bool
+    {
+        return (bool)$this->verifyPeerOff;
+    }
+
     public function getHumhubUrl(): string
     {
         return rtrim($this->humhubUrl ?: SafeBaseUrl::base(true), '/');
@@ -159,6 +176,7 @@ class Configuration extends Model
         $this->humhubUrl = (string)$this->settingsManager->get('humhubUrl');
         $this->jwtSecret = (string)$this->settingsManager->get('jwtSecret');
         $this->jwtHeader = (string)$this->settingsManager->get('jwtHeader', 'Authorization');
+        $this->verifyPeerOff = (bool)$this->settingsManager->get('verifyPeerOff');
 
         if ($this->serverUrl === '') {
             $this->loadFromOnlyOfficeSettings();
@@ -182,6 +200,7 @@ class Configuration extends Model
         $this->humhubUrl = (string)$settings->get('storageUrl');
         $this->jwtSecret = (string)$settings->get('jwtSecret');
         $this->jwtHeader = (string)$settings->get('jwtHeader') ?: 'Authorization';
+        $this->verifyPeerOff = (bool)$settings->get('verifyPeerOff');
         $this->importedFromOnlyOffice = true;
     }
 
@@ -191,7 +210,9 @@ class Configuration extends Model
             return false;
         }
 
-        foreach (['serverUrl', 'internalServerUrl', 'humhubUrl', 'jwtSecret', 'jwtHeader'] as $attribute) {
+        $this->verifyPeerOff = (bool)$this->verifyPeerOff;
+
+        foreach (['serverUrl', 'internalServerUrl', 'humhubUrl', 'jwtSecret', 'jwtHeader', 'verifyPeerOff'] as $attribute) {
             $this->settingsManager->set($attribute, $this->$attribute);
         }
 

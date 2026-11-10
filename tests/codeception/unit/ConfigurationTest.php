@@ -10,6 +10,7 @@ namespace euro_office\unit;
 
 use euro_office\EuroOfficeTestCase;
 use humhub\components\SettingsManager;
+use humhub\libs\CURLHelper;
 use humhub\modules\euro_office\models\Configuration;
 use humhub\modules\euro_office\services\DocumentServerClient;
 
@@ -46,6 +47,7 @@ class ConfigurationTest extends EuroOfficeTestCase
         $onlyOffice->set('serverUrl', 'https://onlyoffice.example.com');
         $onlyOffice->set('storageUrl', 'http://humhub.internal');
         $onlyOffice->set('jwtSecret', self::SECRET);
+        $onlyOffice->set('verifyPeerOff', '1');
 
         $configuration = new Configuration(['settingsManager' => $this->getEuroOfficeModule()->settings]);
         $configuration->loadBySettings();
@@ -55,11 +57,36 @@ class ConfigurationTest extends EuroOfficeTestCase
         $this->assertSame('https://onlyoffice.example.com', $configuration->serverUrl);
         $this->assertSame('http://humhub.internal', $configuration->getHumhubUrl());
         $this->assertSame('Authorization', $configuration->jwtHeader);
+        $this->assertTrue($configuration->verifyPeerOff);
 
         // Own settings take precedence
         $this->getEuroOfficeModule()->settings->set('serverUrl', 'https://docs.example.com');
         $configuration->loadBySettings();
         $this->assertFalse($configuration->importedFromOnlyOffice);
+    }
+
+    public function testVerifyPeerOff(): void
+    {
+        $configuration = new Configuration(['serverUrl' => 'https://docs.example.com']);
+        $client = new DocumentServerClient($configuration);
+        $this->assertSame(CURLHelper::getOptions(), $client->getCurlOptions());
+
+        $configuration->verifyPeerOff = true;
+        $options = $client->getCurlOptions();
+        $this->assertFalse($options[CURLOPT_SSL_VERIFYPEER]);
+        $this->assertSame(0, $options[CURLOPT_SSL_VERIFYHOST]);
+    }
+
+    public function testVerifyPeerOffValidation(): void
+    {
+        $configuration = new Configuration();
+        $configuration->load(['verifyPeerOff' => 'abc'], '');
+        $configuration->validate(['verifyPeerOff']);
+        $this->assertTrue($configuration->hasErrors('verifyPeerOff'));
+
+        $configuration->load(['verifyPeerOff' => ['1']], '');
+        $configuration->validate(['verifyPeerOff']);
+        $this->assertTrue($configuration->hasErrors('verifyPeerOff'));
     }
 
     public function testShortSecretIsNotConfigured(): void
