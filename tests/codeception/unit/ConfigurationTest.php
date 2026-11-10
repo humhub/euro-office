@@ -69,15 +69,24 @@ class ConfigurationTest extends EuroOfficeTestCase
     {
         $configuration = new Configuration(['serverUrl' => 'https://docs.example.com']);
         $client = new DocumentServerClient($configuration);
-        $this->assertNotSame(false, $client->getCurlOptions('https://docs.example.com')[CURLOPT_SSL_VERIFYPEER]);
+        $this->assertSame(CURLHelper::getOptions(), $client->getCurlOptions());
 
         $configuration->verifyPeerOff = true;
-        $options = $client->getCurlOptions('https://docs.example.com');
+        $options = $client->getCurlOptions();
         $this->assertFalse($options[CURLOPT_SSL_VERIFYPEER]);
         $this->assertSame(0, $options[CURLOPT_SSL_VERIFYHOST]);
+    }
 
-        // Plain HTTP requests keep the default options
-        $this->assertSame(CURLHelper::getOptions(), $client->getCurlOptions('http://documentserver'));
+    public function testVerifyPeerOffValidation(): void
+    {
+        $configuration = new Configuration();
+        $configuration->load(['verifyPeerOff' => 'abc'], '');
+        $configuration->validate(['verifyPeerOff']);
+        $this->assertTrue($configuration->hasErrors('verifyPeerOff'));
+
+        $configuration->load(['verifyPeerOff' => ['1']], '');
+        $configuration->validate(['verifyPeerOff']);
+        $this->assertTrue($configuration->hasErrors('verifyPeerOff'));
     }
 
     public function testShortSecretIsNotConfigured(): void

@@ -70,7 +70,7 @@ class DocumentServerClient
 
         $client = new Client(['transport' => CurlTransport::class]);
         $response = $client->get($url)
-            ->setOptions($this->getCurlOptions($url))
+            ->setOptions($this->getCurlOptions())
             ->addOptions(['timeout' => $module->requestTimeout])
             ->send();
 
@@ -81,11 +81,11 @@ class DocumentServerClient
         return $response;
     }
 
-    public function getCurlOptions(string $url): array
+    public function getCurlOptions(): array
     {
         $options = CURLHelper::getOptions();
 
-        if ($this->config->verifyPeerOff && str_starts_with(strtolower($url), 'https://')) {
+        if ($this->config->isVerifyPeerOff()) {
             $options[CURLOPT_SSL_VERIFYPEER] = false;
             $options[CURLOPT_SSL_VERIFYHOST] = 0;
         }

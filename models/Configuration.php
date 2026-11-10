@@ -42,9 +42,10 @@ class Configuration extends Model
     public string $jwtHeader = 'Authorization';
 
     /**
-     * @var bool whether to skip the SSL certificate check on requests from HumHub to the document server
+     * @var bool|string whether to skip the SSL certificate check on requests from HumHub to the document server.
+     * Not typed, so invalid form input is rejected by the validation rule instead of being coerced.
      */
-    public bool $verifyPeerOff = false;
+    public $verifyPeerOff = false;
 
     public ?SettingsManager $settingsManager = null;
 
@@ -157,6 +158,11 @@ class Configuration extends Model
         return rtrim($this->internalServerUrl ?: $this->serverUrl, '/');
     }
 
+    public function isVerifyPeerOff(): bool
+    {
+        return (bool)$this->verifyPeerOff;
+    }
+
     public function getHumhubUrl(): string
     {
         return rtrim($this->humhubUrl ?: SafeBaseUrl::base(true), '/');
@@ -204,10 +210,11 @@ class Configuration extends Model
             return false;
         }
 
-        foreach (['serverUrl', 'internalServerUrl', 'humhubUrl', 'jwtSecret', 'jwtHeader'] as $attribute) {
+        $this->verifyPeerOff = (bool)$this->verifyPeerOff;
+
+        foreach (['serverUrl', 'internalServerUrl', 'humhubUrl', 'jwtSecret', 'jwtHeader', 'verifyPeerOff'] as $attribute) {
             $this->settingsManager->set($attribute, $this->$attribute);
         }
-        $this->settingsManager->set('verifyPeerOff', $this->verifyPeerOff ? 1 : 0);
 
         return true;
     }
