@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.2 (Unreleased)
+------------------
+- Enh: Automated code refactoring for HumHub 1.19 using Rector
+
 1.0.3 (Unreleased)
 ------------------
 - Enh: Option to disable SSL certificate verification for requests to the document server

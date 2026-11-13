@@ -16,11 +16,11 @@ use yii\web\Request;
 /**
  * Signs and verifies tokens exchanged with the document server using the shared secret
  */
-final class JwtService
+final readonly class JwtService
 {
     private const ALGORITHM = 'HS256';
 
-    public function __construct(private readonly Configuration $config)
+    public function __construct(private Configuration $config)
     {
     }
 
