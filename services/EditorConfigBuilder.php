@@ -21,9 +21,9 @@ use Yii;
  *
  * @see https://api.onlyoffice.com/docs/docs-api/usage-api/advanced-parameters/
  */
-final class EditorConfigBuilder
+final readonly class EditorConfigBuilder
 {
-    public function __construct(private readonly Configuration $config)
+    public function __construct(private Configuration $config)
     {
     }
 
