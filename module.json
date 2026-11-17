@@ -11,9 +11,9 @@
         "presentation",
         "collaboration"
     ],
-    "version": "1.0.2",
+    "version": "1.1.0",
     "humhub": {
-        "minVersion": "1.19"
+        "minVersion": "1.20"
     },
     "screenshots": [
         "resources/screenshot1.png",

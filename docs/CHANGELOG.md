@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.1.0 (Unreleased)
+------------------
+- Enh: Update for HumHub 1.20 (core `Icon`, no more workaround for the page reload on CSP violations)
+
 1.0.3 (Unreleased)
 ------------------
 - Enh: Option to disable SSL certificate verification for requests to the document server

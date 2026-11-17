@@ -9,7 +9,7 @@
 namespace humhub\modules\euro_office\filehandler;
 
 use humhub\modules\file\handler\BaseFileHandler;
-use humhub\modules\ui\icon\widgets\Icon;
+use humhub\widgets\Icon;
 use Yii;
 use yii\helpers\Url;
 
@@ -21,7 +21,7 @@ class CreateFileHandler extends BaseFileHandler
     public function getLinkAttributes()
     {
         return [
-            'label' => Icon::get('file-text-o') . Yii::t('EuroOfficeModule.base', 'Create Office document'),
+            'label' => Icon::get('file-text') . Yii::t('EuroOfficeModule.base', 'Create Office document'),
             'data-action-url' => Url::to(['/euro-office/create']),
             'data-action-click' => 'ui.modal.load',
             'data-modal-id' => 'euro-office-modal',
