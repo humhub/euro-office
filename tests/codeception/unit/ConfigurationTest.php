@@ -94,4 +94,44 @@ class ConfigurationTest extends EuroOfficeTestCase
         $configuration = new Configuration(['serverUrl' => 'https://docs.example.com', 'jwtSecret' => 'short']);
         $this->assertFalse($configuration->isConfigured());
     }
+
+    public function testEmptySecretInputKeepsStoredSecret(): void
+    {
+        $settings = $this->getEuroOfficeModule()->settings;
+        $settings->set('serverUrl', 'https://docs.example.com');
+        $settings->set('jwtSecret', self::SECRET);
+
+        $configuration = new Configuration(['settingsManager' => $settings]);
+        $configuration->loadBySettings();
+        $this->assertTrue($configuration->hasStoredJwtSecret());
+        $this->assertFalse($configuration->isAttributeRequired('jwtSecret'));
+        $this->assertSame('', $configuration->getJwtSecretInputValue());
+
+        $configuration->load(['jwtSecret' => ''], '');
+        $this->assertSame(self::SECRET, $configuration->jwtSecret);
+        $this->assertSame('', $configuration->getJwtSecretInputValue());
+
+        // A new secret which was not saved yet is shown again, e.g. on validation errors
+        $newSecret = str_repeat('n', Configuration::MIN_SECRET_LENGTH);
+        $configuration->load(['jwtSecret' => $newSecret, 'jwtHeader' => 'invalid header'], '');
+        $this->assertFalse($configuration->validate(['jwtHeader']));
+        $this->assertSame($newSecret, $configuration->jwtSecret);
+        $this->assertSame($newSecret, $configuration->getJwtSecretInputValue());
+    }
+
+    public function testEmptySecretInputWithoutStoredSecret(): void
+    {
+        $settings = $this->getEuroOfficeModule()->settings;
+        $settings->set('serverUrl', 'https://docs.example.com');
+        $settings->delete('jwtSecret');
+
+        $configuration = new Configuration(['settingsManager' => $settings]);
+        $configuration->loadBySettings();
+        $this->assertFalse($configuration->hasStoredJwtSecret());
+        $this->assertTrue($configuration->isAttributeRequired('jwtSecret'));
+
+        $configuration->load(['jwtSecret' => ''], '');
+        $configuration->validate(['jwtSecret']);
+        $this->assertTrue($configuration->hasErrors('jwtSecret'));
+    }
 }
