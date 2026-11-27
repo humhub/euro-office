@@ -199,6 +199,28 @@ class Configuration extends Model
     }
 
     /**
+     * Value of the secret input: a newly entered secret which was not saved yet (e.g. on validation errors),
+     * so it doesn't have to be entered again. Never the stored secret.
+     */
+    public function getJwtSecretInputValue(): string
+    {
+        return $this->jwtSecret !== $this->storedJwtSecret ? $this->jwtSecret : '';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isAttributeRequired($attribute)
+    {
+        // The stored secret is kept when the input is left empty
+        if ($attribute === 'jwtSecret' && $this->hasStoredJwtSecret()) {
+            return false;
+        }
+
+        return parent::isAttributeRequired($attribute);
+    }
+
+    /**
      * @inheritdoc
      */
     public function load($data, $formName = null)

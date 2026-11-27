@@ -104,13 +104,19 @@ class ConfigurationTest extends EuroOfficeTestCase
         $configuration = new Configuration(['settingsManager' => $settings]);
         $configuration->loadBySettings();
         $this->assertTrue($configuration->hasStoredJwtSecret());
+        $this->assertFalse($configuration->isAttributeRequired('jwtSecret'));
+        $this->assertSame('', $configuration->getJwtSecretInputValue());
 
         $configuration->load(['jwtSecret' => ''], '');
         $this->assertSame(self::SECRET, $configuration->jwtSecret);
+        $this->assertSame('', $configuration->getJwtSecretInputValue());
 
+        // A new secret which was not saved yet is shown again, e.g. on validation errors
         $newSecret = str_repeat('n', Configuration::MIN_SECRET_LENGTH);
-        $configuration->load(['jwtSecret' => $newSecret], '');
+        $configuration->load(['jwtSecret' => $newSecret, 'jwtHeader' => 'invalid header'], '');
+        $this->assertFalse($configuration->validate(['jwtHeader']));
         $this->assertSame($newSecret, $configuration->jwtSecret);
+        $this->assertSame($newSecret, $configuration->getJwtSecretInputValue());
     }
 
     public function testEmptySecretInputWithoutStoredSecret(): void
@@ -122,6 +128,7 @@ class ConfigurationTest extends EuroOfficeTestCase
         $configuration = new Configuration(['settingsManager' => $settings]);
         $configuration->loadBySettings();
         $this->assertFalse($configuration->hasStoredJwtSecret());
+        $this->assertTrue($configuration->isAttributeRequired('jwtSecret'));
 
         $configuration->load(['jwtSecret' => ''], '');
         $configuration->validate(['jwtSecret']);

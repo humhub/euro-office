@@ -31,8 +31,8 @@ use humhub\widgets\form\ActiveForm;
         <?= $form->field($model, 'serverUrl') ?>
         <?= $form->field($model, 'jwtSecret')->passwordInput([
             'autocomplete' => 'new-password',
-            // Never send the secret back to the browser
-            'value' => '',
+            // Never send the stored secret back to the browser
+            'value' => $model->getJwtSecretInputValue(),
             'placeholder' => $model->hasStoredJwtSecret()
                 ? Yii::t('EuroOfficeModule.base', 'Configured. Leave empty to keep the current secret.')
                 : null,

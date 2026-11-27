@@ -4,7 +4,7 @@ Changelog
 1.0.3 (Unreleased)
 ------------------
 - Enh: Option to disable SSL certificate verification for requests to the document server
-- Enh: Never reveal the configured JWT secret on the configuration page
+- Fix: Never reveal the configured JWT secret on the configuration page
 
 1.0.2 (November 9, 2026)
 ------------------------
