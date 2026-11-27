@@ -55,6 +55,11 @@ class Configuration extends Model
     public bool $importedFromOnlyOffice = false;
 
     /**
+     * @var string the secret loaded from the settings, kept when the form is submitted with an empty secret
+     */
+    private string $storedJwtSecret = '';
+
+    /**
      * @inheritdoc
      */
     public function rules()
@@ -181,6 +186,31 @@ class Configuration extends Model
         if ($this->serverUrl === '') {
             $this->loadFromOnlyOfficeSettings();
         }
+
+        $this->storedJwtSecret = $this->jwtSecret;
+    }
+
+    /**
+     * Whether a JWT secret is already set. The secret itself is never shown in the form.
+     */
+    public function hasStoredJwtSecret(): bool
+    {
+        return $this->storedJwtSecret !== '';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function load($data, $formName = null)
+    {
+        $loaded = parent::load($data, $formName);
+
+        // The form never shows the stored secret, so an empty input means "keep the current secret"
+        if ($loaded && $this->jwtSecret === '') {
+            $this->jwtSecret = $this->storedJwtSecret;
+        }
+
+        return $loaded;
     }
 
     /**
@@ -215,6 +245,8 @@ class Configuration extends Model
         foreach (['serverUrl', 'internalServerUrl', 'humhubUrl', 'jwtSecret', 'jwtHeader', 'verifyPeerOff'] as $attribute) {
             $this->settingsManager->set($attribute, $this->$attribute);
         }
+
+        $this->storedJwtSecret = $this->jwtSecret;
 
         return true;
     }

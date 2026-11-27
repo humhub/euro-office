@@ -94,4 +94,37 @@ class ConfigurationTest extends EuroOfficeTestCase
         $configuration = new Configuration(['serverUrl' => 'https://docs.example.com', 'jwtSecret' => 'short']);
         $this->assertFalse($configuration->isConfigured());
     }
+
+    public function testEmptySecretInputKeepsStoredSecret(): void
+    {
+        $settings = $this->getEuroOfficeModule()->settings;
+        $settings->set('serverUrl', 'https://docs.example.com');
+        $settings->set('jwtSecret', self::SECRET);
+
+        $configuration = new Configuration(['settingsManager' => $settings]);
+        $configuration->loadBySettings();
+        $this->assertTrue($configuration->hasStoredJwtSecret());
+
+        $configuration->load(['jwtSecret' => ''], '');
+        $this->assertSame(self::SECRET, $configuration->jwtSecret);
+
+        $newSecret = str_repeat('n', Configuration::MIN_SECRET_LENGTH);
+        $configuration->load(['jwtSecret' => $newSecret], '');
+        $this->assertSame($newSecret, $configuration->jwtSecret);
+    }
+
+    public function testEmptySecretInputWithoutStoredSecret(): void
+    {
+        $settings = $this->getEuroOfficeModule()->settings;
+        $settings->set('serverUrl', 'https://docs.example.com');
+        $settings->delete('jwtSecret');
+
+        $configuration = new Configuration(['settingsManager' => $settings]);
+        $configuration->loadBySettings();
+        $this->assertFalse($configuration->hasStoredJwtSecret());
+
+        $configuration->load(['jwtSecret' => ''], '');
+        $configuration->validate(['jwtSecret']);
+        $this->assertTrue($configuration->hasErrors('jwtSecret'));
+    }
 }
